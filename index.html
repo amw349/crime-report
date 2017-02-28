@@ -1,0 +1,55 @@
+<html>
+<head>
+    <title>Crime in New York City</title>
+    <link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script type="text/javascript" src="js/geojson.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="http://d3js.org/topojson.v2.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+
+    <style>
+        body { font-family: 'Alegreya Sans', Calibri, sans-serif; }
+        svg {border: 1px solid black;}
+        svg#borough_map {background-color: #55dd55;}
+        path.borough_map {stroke: 4px}
+    </style>
+</head>
+<body>
+    <svg id ="borough_map" width="700" height="700"></svg>
+
+    <script>
+
+    var svg1 = d3.select("#borough_map");
+    var projection = d3.geoMercator().scale(75);
+    var pathGenerator = d3.geoPath().projection(projection);
+    var geo;
+
+    d3.json("boroughs.geojson", function (error, data) {
+        geo = data;
+        showMap();
+    });
+
+    function showMap() {
+
+        projection.fitExtent([[100,100], [svg1.attr("width")-100, svg1.attr("height")-100]], geo);
+
+        pathGenerator = d3.geoPath().projection(projection);
+
+        var paths = svg1.selectAll("path.borough_map").data(geo.features);
+
+        paths.enter()
+        .append("path")
+        .attr("class", "borough_map")
+        .attr("stroke","black")
+        .attr("stroke-width","1")
+        .attr("fill","#ffffff")
+        .merge(paths)
+        .attr("d", function (borough_map) {
+            return pathGenerator(borough_map);
+        });
+    }
+    </script>
+
+</body>
+</html>
