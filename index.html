@@ -11,42 +11,125 @@
     <style>
         body { font-family: 'Alegreya Sans', Calibri, sans-serif; }
         svg {border: 1px solid black;}
-        svg#borough_map {background-color: #55dd55;}
+        svg#borough_map {background-color: #888888;}
         path.borough_map {stroke: 4px}
     </style>
 </head>
 <body>
-    <svg id ="borough_map" width="700" height="700"></svg>
+    <svg id ="borough_map" width="800" height="700"></svg>
+    <svg id ="borough_plot" width="800" height="450"></svg>
 
     <script>
 
-    var svg1 = d3.select("#borough_map");
-    var projection = d3.geoMercator().scale(75);
-    var pathGenerator = d3.geoPath().projection(projection);
     var geo;
+    var tsv;
 
-    d3.json("boroughs.geojson", function (error, data) {
+    var svg1 = d3.select("#borough_map");
+    var svg2 = d3.select("#borough_plot");
+
+    var projection = d3.geoMercator();
+
+    d3.tsv("data/smaller.tsv", function(error, data) {
+        tsv=data;
+    });
+
+    //Geojson data taken from https://github.com/dwillis/nyc-maps
+    d3.json("data/boroughs.geojson", function (error, data) {
         geo = data;
         showMap();
+        plotPoints();
+        accumTimes();
     });
+
+    function colorBorough(obj) {
+        var name = obj.properties.BoroName;
+        if (name == "Staten Island") return "#99ffff";
+        else if (name == "Queens") return "#ff99ff";
+        else if (name == "Manhattan") return "#9999ff";
+        else if (name == "Brooklyn") return "#99ff99";
+        else return "#ff9999"; //Bronx
+    }
 
     function showMap() {
 
-        projection.fitExtent([[100,100], [svg1.attr("width")-100, svg1.attr("height")-100]], geo);
-
+        projection.fitExtent([[100,100], [600, 600]], geo);
         pathGenerator = d3.geoPath().projection(projection);
-
         var paths = svg1.selectAll("path.borough_map").data(geo.features);
 
         paths.enter()
         .append("path")
         .attr("class", "borough_map")
         .attr("stroke","black")
-        .attr("stroke-width","1")
-        .attr("fill","#ffffff")
+        .attr("stroke-width",1)
+        .attr("opacity",1)
+        .attr("fill",colorBorough)
         .merge(paths)
-        .attr("d", function (borough_map) {
-            return pathGenerator(borough_map);
+        .attr("d", function (borough_map) { return pathGenerator(borough_map); });
+    }
+
+    function plotPoints() {
+        //scale domains and ranges calculated by searching through the geojson file.
+        var scaleLati = d3.scaleLinear().domain([40.91553,40.496115]).range([100,600]);
+        var scaleLongi = d3.scaleLinear().domain([-74.25559,-73.70000]).range([100,600]);
+
+        //Data
+        tsv.forEach( function(d) {
+            if ((d.Latitude != undefined) && (d.Longitude != undefined)){
+                var lati = parseFloat(d.Latitude);
+                var longi = parseFloat(d.Longitude);
+                svg1.append("circle")
+                .attr("cx", scaleLongi(longi))
+                .attr("cy", scaleLati(lati))
+                .attr("r",4)
+                .attr("opacity",0.15);
+            }
+        });
+    }
+
+    function accumTimes() {
+
+        //Axis
+        var scaleB = d3.scaleLinear().domain([0,24]).range([0,600]);
+        var axB = d3.axisBottom(scaleB).tickFormat(function(d) {
+            var ampm; var hour;
+            if (d==24 || d-12<0) ampm = "AM"; else ampm = "PM";
+            if (d%12 == 0) hour = 12; else hour = d%12;
+            return hour+ampm;
+        });
+        svg2.append("g").attr("transform", "translate(150, 400)").call(axB);
+
+        //Text
+        svg2.append("text").html("Bronx").attr("transform", "translate(125, 355)").attr("text-anchor","end");
+        svg2.append("text").html("Brooklyn").attr("transform", "translate(125, 295)").attr("text-anchor","end");
+        svg2.append("text").html("Manhattan").attr("transform", "translate(125, 235)").attr("text-anchor","end");
+        svg2.append("text").html("Queens").attr("transform", "translate(125, 175)").attr("text-anchor","end");
+        svg2.append("text").html("Staten Island").attr("transform", "translate(125, 115)").attr("text-anchor","end");
+        svg2.append("text").html("Concentration of Reports by Time of Day (per Borough)")
+        .attr("transform", "translate(400, 50)").attr("text-anchor","middle").attr("font-size","25");
+
+        //Data
+        tsv.forEach( function(d) {
+            var dtime = d.CMPLNT_FR_TM
+            if (dtime != undefined){
+                var hour = dtime.split(":")[0];
+                var minute = dtime.split(":")[1];
+                var inthour = parseFloat(hour);
+                var intminute = parseFloat(minute);
+
+                svg2.append("rect")
+                .attr("x", inthour*25+intminute*25/60+150)
+                .attr("y", function () {
+                    var name = d.BORO_NM;
+                    if (name == "STATEN ISLAND") return 100;
+                    else if (name == "QUEENS") return 160;
+                    else if (name == "MANHATTAN") return 220;
+                    else if (name == "BROOKLYN") return 280;
+                    else return 340; //Bronx
+                })
+                .attr("height",20)
+                .attr("width",6)
+                .attr("opacity",0.1);
+            }
         });
     }
     </script>
