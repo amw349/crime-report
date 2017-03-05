@@ -64,11 +64,11 @@
 
     function colorBorough(obj) {
         var name = obj.properties.BoroName;
-        if (name == "Staten Island") return "#99ffff";
-        else if (name == "Queens") return "#ff99ff";
-        else if (name == "Manhattan") return "#9999ff";
-        else if (name == "Brooklyn") return "#99ff99";
-        else return "#ff9999"; //Bronx
+        if (name == "Staten Island") return "#9fff80";
+        else if (name == "Queens") return "#0d3300";
+        else if (name == "Manhattan") return "#40ff00";
+        else if (name == "Brooklyn") return "#00B200";
+        else if (name == "Bronx") return "#006600"; 
     }
 
     function showMap() {
@@ -106,8 +106,12 @@
                 svg1.append("circle")
                 .attr("cx", scaleLongi(longi))
                 .attr("cy", scaleLati(lati))
-                .attr("r",4)
-                .attr("opacity",0.15);
+                .attr("r", 2)
+                .style("fill", function() { 
+                    if (d.LAW_CAT_CD == "VIOLATION") {return "#ffff00";}
+                    else if (d.LAW_CAT_CD == "MISDEMEANOR") {return "#FFA500";}
+                    else if (d.LAW_CAT_CD == "FELONY") {return "#ff0000";}
+                });
             }
         });
     }
