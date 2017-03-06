@@ -136,6 +136,15 @@
             else if (crime=="CRIMINAL MIS") return "Criminal Mischief Complaints";
         })
 
+        //Subtitle
+        svg1.append("text").attr("transform", "translate(400, 72)").attr("text-anchor","middle")
+        .attr("font-size","15").attr("fill", "#aaaaaa")
+        .html( function() {
+            if (crime=="LARCENY") return "(Petit Larceny, Grand Larceny, & Felon Theft)";
+            else if (crime=="AGGRAVATED HARASSMENT") return "(First Degree, Second Degree)";
+            else if (crime=="CRIMINAL MIS") return "(Damage, defacement, alteration, or destruction of property) ";
+        })
+
 
         //Data
         tsv.forEach( function(d) {
