@@ -18,6 +18,9 @@
         #borough_map {background-color: #fcfaf4;  
                         display: block;
                         margin: 0 auto;}
+        #borough_map1 {background-color: #fcfaf4;  
+                        display: block;
+                        margin: 0 auto;}
         #borough_plot {display: block;
                         margin: 0 auto;
         path.borough_map {stroke: 4px}
@@ -45,6 +48,7 @@
 
     <svg id ="borough_map" width="800" height="700"></svg>
     <svg id ="borough_plot" width="800" height="450"></svg>
+    <svg id ="borough_map1" width="800" height="700"></svg>
 
     <script>
 
@@ -53,6 +57,7 @@
 
     var svg1 = d3.select("#borough_map");
     var svg2 = d3.select("#borough_plot");
+    var svg3 = d3.select("#borough_map1");
 
     var projection = d3.geoMercator();
 
@@ -64,7 +69,9 @@
     d3.json("data/boroughs.geojson", function (error, data) {
         geo = data;
         showMap();
+        showMap1();
         plotPoints();
+        plotPoints1();
         accumTimes();
     });
 
@@ -82,6 +89,23 @@
         projection.fitExtent([[100,100], [600, 600]], geo);
         pathGenerator = d3.geoPath().projection(projection);
         var paths = svg1.selectAll("path.borough_map").data(geo.features);
+
+        paths.enter()
+        .append("path")
+        .attr("class", "borough_map")
+        .attr("stroke","black")
+        .attr("stroke-width",1)
+        .attr("opacity",1)
+        .attr("fill",colorBorough)
+        .merge(paths)
+        .attr("d", function (borough_map) { return pathGenerator(borough_map); });
+    }
+
+    function showMap1() {
+
+        projection.fitExtent([[100,100], [600, 600]], geo);
+        pathGenerator = d3.geoPath().projection(projection);
+        var paths = svg3.selectAll("path.borough_map").data(geo.features);
 
         paths.enter()
         .append("path")
@@ -129,6 +153,32 @@
                     else if (d.LAW_CAT_CD == "MISDEMEANOR") {return "#FFA500";}
                     else if (d.LAW_CAT_CD == "FELONY") {return "#ff0000";}
                 });
+            }
+        });
+    }
+
+    function plotPoints1() {
+        //scale domains and ranges calculated by searching through the geojson file.
+        var scaleLati = d3.scaleLinear().domain([40.91553,40.496115]).range([100,600]);
+        var scaleLongi = d3.scaleLinear().domain([-74.25559,-73.70000]).range([100,600]);
+
+        //Pins 
+        svg3.append("text").html("Manhattan").attr("font-size",17).attr("x",260).attr("y",220).attr("fill", "#40ff00"); //Manhattan
+        svg3.append("text").html("Bronx").attr("font-size",17).attr("x",470).attr("y",100).attr("fill", "#006600"); //Bronx
+        svg3.append("text").html("Brooklyn").attr("font-size",17).attr("x",290).attr("y",550).attr("fill", "#00B200"); //Brooklyn
+        svg3.append("text").html("Queens").attr("font-size",17).attr("x",570).attr("y",250).attr("fill", "#0d3300"); //Queens
+        svg3.append("text").html("Staten Island").attr("font-size",17).attr("x",140).attr("y",400).attr("fill", "#9fff80"); //Staten Island
+
+        //Data
+        tsv.forEach( function(d) {
+            if ((d.Latitude != undefined) && (d.Longitude != undefined) && d.PD_DESC.includes("LARCENY")) {
+                var lati = parseFloat(d.Latitude);
+                var longi = parseFloat(d.Longitude);
+                svg3.append("circle")
+                .attr("cx", scaleLongi(longi))
+                .attr("cy", scaleLati(lati))
+                .attr("r", 2)
+                .style("fill", "#ffff00");
             }
         });
     }
