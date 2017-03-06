@@ -64,7 +64,7 @@
 
     var projection = d3.geoMercator();
 
-    d3.tsv("data/smaller.tsv", function(error, data) {
+    d3.tsv("data/NYPD_Complaint_Map.tsv", function(error, data) {
         tsv = data;
     });
 
@@ -115,7 +115,7 @@
         svg1.append("text").html("Staten Island").attr("font-size",17).attr("x",140).attr("y",400).attr("fill", "#aaaaaa"); //Staten Island
 
         //Title
-        svg1.append("text").html("NYPD Complaint Map Projection")
+        svg1.append("text").html("Larceny Complaints")
         .attr("transform", "translate(400, 50)").attr("text-anchor","middle").attr("font-size","25").attr("fill", "#ffffff");
 
         //Data
@@ -127,10 +127,13 @@
                 .attr("cx", scaleLongi(longi))
                 .attr("cy", scaleLati(lati))
                 .attr("r", 2)
+                .attr("opacity", 0.3)
+                .attr("stroke","blue")
+                .attr("stroke-width",1)
                 .style("fill", function() {
-                    if (d.LAW_CAT_CD == "VIOLATION") {return "#ffff00";}
-                    else if (d.LAW_CAT_CD == "MISDEMEANOR") {return "#FFA500";}
-                    else if (d.LAW_CAT_CD == "FELONY") {return "#ff0000";}
+                    if (crime=="LARCENY"){
+                        return "#ffffff"
+                    }
                 });
             }
         });
