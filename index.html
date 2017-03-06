@@ -18,6 +18,9 @@
             background-color: #222222;
             width: 1600px;
             display: inline-block;}
+        div {
+            display: block;
+            }
         svg { margin: 0 0 0 0;
             float:left; }
         svg#border
@@ -40,27 +43,25 @@
     </style>
 </head>
 <body>
-     <svg id="border" viewBox="0 0 100 10" preserveAspectRatio="none">
+
+    <svg id="border" viewBox="0 0 100 10" preserveAspectRatio="none">
         <text
         font-weight = "900"
-        fill= "#ffffff" text-anchor="middle" x="55" y="7" font-size="4.5px">NYPD Complaint Data Analysis</text>
+        fill= "#ffffff" text-anchor="middle" x="55" y="7" font-size="4.5px">2015 NYPD Complaint Data Analysis</text>
         <image x="10" y="1.7" width="7" height="7" xlink:href="images/badge.png">
     </svg>
-
-    <svg id ="info_blurb" width="800" height="450"></svg>
-    <svg id ="borough_plot" width="800" height="450"></svg>
+    <div height="50px" width="1600px"></div>
     <svg id ="borough_map1" width="800" height="700"></svg>
+    <svg id ="borough_plot1" width="800" height="700"></svg>
+    <svg id ="borough_map2" width="800" height="700"></svg>
+    <svg id ="borough_plot2" width="800" height="700"></svg>
+    <svg id ="borough_map3" width="800" height="700"></svg>
+    <svg id ="borough_plot3" width="800" height="700"></svg>
 
     <script>
 
     var geo;
     var tsv;
-
-    var svg0 = d3.select("#borough_plot");
-    var svg1 = d3.select("#borough_map1");
-    var svg2;
-    var svg3;
-    var svg4;
 
     var projection = d3.geoMercator();
 
@@ -72,9 +73,16 @@
     d3.json("data/boroughs.geojson", function (error, data) {
         geo = data;
 
-        showConcentration();
-        showMap(1);
+
+
+
+        showMap(1); showMap(2); showMap(3);
         plotPoints(1,"LARCENY");
+        showConcentration(1, "LARCENY");
+        plotPoints(2,"AGGRAVATED HARASSMENT");
+        showConcentration(2,"AGGRAVATED HARASSMENT");
+        plotPoints(3,"CRIMINAL MIS");
+        showConcentration(3,"CRIMINAL MIS");
 
     });
 
@@ -104,8 +112,8 @@
         var svg1 = d3.select(map_id);
 
         //scale domains and ranges calculated by searching through the geojson file.
-        var scaleLati = d3.scaleLinear().domain([40.91553,40.496115]).range([100,600]);
-        var scaleLongi = d3.scaleLinear().domain([-74.25559,-73.70000]).range([100,600]);
+        var scaleLati = d3.scaleLinear().domain([40.50110098,40.91027045]).range([600,100]);
+        var scaleLongi = d3.scaleLinear().domain([-74.24930373,-73.70138638]).range([100,600]);
 
         //Pins
         svg1.append("text").html("Manhattan").attr("font-size",17).attr("x",260).attr("y",220).attr("fill", "#aaaaaa"); //Manhattan
@@ -115,31 +123,44 @@
         svg1.append("text").html("Staten Island").attr("font-size",17).attr("x",140).attr("y",400).attr("fill", "#aaaaaa"); //Staten Island
 
         //Title
-        svg1.append("text").html("Larceny Complaints")
-        .attr("transform", "translate(400, 50)").attr("text-anchor","middle").attr("font-size","25").attr("fill", "#ffffff");
+        svg1.append("text").attr("transform", "translate(400, 50)").attr("text-anchor","middle")
+        .attr("font-size","25").attr("fill", "#ffffff")
+        .html( function() {
+            if (crime=="LARCENY") return "Larceny Complaints";
+            else if (crime=="AGGRAVATED HARASSMENT") return "Aggravated Harassment Complaints";
+            else if (crime=="CRIMINAL MIS") return "Criminal Mischief Complaints";
+        })
+
 
         //Data
         tsv.forEach( function(d) {
-            if ((d.Latitude != undefined) && (d.Longitude != undefined) && d.PD_DESC.includes(crime)){
+            if ((d.Latitude != (undefined || "")) && (d.Longitude != (undefined || "")) && d.PD_DESC.includes(crime)){
                 var lati = parseFloat(d.Latitude);
                 var longi = parseFloat(d.Longitude);
                 svg1.append("circle")
                 .attr("cx", scaleLongi(longi))
                 .attr("cy", scaleLati(lati))
                 .attr("r", 2)
-                .attr("opacity", 0.3)
-                .attr("stroke","blue")
+                .attr("opacity", function() {
+                    if (crime=="LARCENY") return 0.3;
+                    else if (crime=="AGGRAVATED HARASSMENT") return 0.5;
+                    else return 0.5;
+                })
+                .attr("stroke", function() {
+                    if (crime=="LARCENY") return "blue";
+                    else if (crime=="AGGRAVATED HARASSMENT") return "red";
+                    else return "#ff00ff"
+                })
                 .attr("stroke-width",1)
-                .style("fill", function() {
-                    if (crime=="LARCENY"){
-                        return "#ffffff"
-                    }
-                });
+                .style("fill", "#ffffff");
             }
         });
     }
 
-    function showConcentration() {
+    function showConcentration(num, crime) {
+
+        var map_id = "#borough_plot"+num;
+        var svg0 = d3.select(map_id);
 
         //Axis
         var scaleB = d3.scaleLinear().domain([0,24]).range([0,600]);
@@ -149,40 +170,43 @@
             if (d%12 == 0) hour = 12; else hour = d%12;
             return hour+ampm;
         });
-        svg0.append("g").attr("transform", "translate(150, 400)").attr("class", "axisB").call(axB);
+        svg0.append("g").attr("transform", "translate(150, 450)").attr("class", "axisB").call(axB);
 
         //Text
-        svg0.append("text").html("Bronx").attr("transform", "translate(125, 355)").attr("text-anchor","end").attr("fill", "#aaaaaa");
-        svg0.append("text").html("Brooklyn").attr("transform", "translate(125, 295)").attr("text-anchor","end").attr("fill", "#aaaaaa");
-        svg0.append("text").html("Manhattan").attr("transform", "translate(125, 235)").attr("text-anchor","end").attr("fill", "#aaaaaa");
-        svg0.append("text").html("Queens").attr("transform", "translate(125, 175)").attr("text-anchor","end").attr("fill", "#aaaaaa");
-        svg0.append("text").html("Staten Island").attr("transform", "translate(125, 115)").attr("text-anchor","end").attr("fill", "#aaaaaa");
+        svg0.append("text").html("Bronx").attr("transform", "translate(125, 405)").attr("text-anchor","end").attr("fill", "#aaaaaa");
+        svg0.append("text").html("Brooklyn").attr("transform", "translate(125, 345)").attr("text-anchor","end").attr("fill", "#aaaaaa");
+        svg0.append("text").html("Manhattan").attr("transform", "translate(125, 285)").attr("text-anchor","end").attr("fill", "#aaaaaa");
+        svg0.append("text").html("Queens").attr("transform", "translate(125, 225)").attr("text-anchor","end").attr("fill", "#aaaaaa");
+        svg0.append("text").html("Staten Island").attr("transform", "translate(125, 165)").attr("text-anchor","end").attr("fill", "#aaaaaa");
         svg0.append("text").html("Concentration of Reports by Time of Day (per Borough)")
         .attr("transform", "translate(400, 50)").attr("text-anchor","middle").attr("font-size","25").attr("fill", "#ffffff").attr("font-weight","900");
 
         //Data
         tsv.forEach( function(d) {
             var dtime = d.CMPLNT_FR_TM
-            if (dtime != undefined){
+            if (dtime != undefined && d.PD_DESC.includes(crime)){
                 var hour = dtime.split(":")[0];
                 var minute = dtime.split(":")[1];
                 var inthour = parseFloat(hour);
                 var intminute = parseFloat(minute);
-
                 svg0.append("rect")
                 .attr("x", inthour*25+intminute*25/60+150)
                 .attr("y", function () {
                     var name = d.BORO_NM;
-                    if (name == "STATEN ISLAND") return 100;
-                    else if (name == "QUEENS") return 160;
-                    else if (name == "MANHATTAN") return 220;
-                    else if (name == "BROOKLYN") return 280;
-                    else return 340; //Bronx
+                    if (name == "STATEN ISLAND") return 150;
+                    else if (name == "QUEENS") return 210;
+                    else if (name == "MANHATTAN") return 270;
+                    else if (name == "BROOKLYN") return 330;
+                    else return 390; //Bronx
                 })
                 .attr("height",20)
                 .attr("width",6)
                 .attr("opacity",0.15)
-                .attr("fill", "#ff0000")
+                .attr("fill", function(){
+                    if (crime=="LARCENY") return "#5555ff";
+                    else if (crime=="AGGRAVATED HARASSMENT") return "red";
+                    else return "#ff00ff";
+                });
             }
         });
     }
