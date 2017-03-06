@@ -109,11 +109,11 @@
         .attr("transform", "translate(690, 80)").attr("font-size","15").attr("fill", "red");
 
         //Pins 
-        svg1.append("rect").attr("height",25).attr("x",135).attr("y",220).attr("width",200).attr("rx",3).attr("ry",3).attr("fill", "#40ff00"); //Manhattan
-        svg1.append("rect").attr("height",25).attr("x",370).attr("y",65).attr("width",200).attr("rx",3).attr("ry",3).attr("fill", "#006600"); //Bronx
-        svg1.append("rect").attr("height",25).attr("x",300).attr("y",550).attr("width",200).attr("rx",3).attr("ry",3).attr("fill", "#00B200"); //Brooklyn
-        svg1.append("rect").attr("height",25).attr("x",540).attr("y",220).attr("width",200).attr("rx",3).attr("ry",3).attr("fill", "#0d3300"); //Queens
-        svg1.append("rect").attr("height",25).attr("x",50).attr("y",380).attr("width",200).attr("rx",3).attr("ry",3).attr("fill", "#9fff80"); //Staten Island
+        svg1.append("text").html("Manhattan").attr("font-size",17).attr("x",260).attr("y",220).attr("fill", "#40ff00"); //Manhattan
+        svg1.append("text").html("Bronx").attr("font-size",17).attr("x",470).attr("y",100).attr("fill", "#006600"); //Bronx
+        svg1.append("text").html("Brooklyn").attr("font-size",17).attr("x",290).attr("y",550).attr("fill", "#00B200"); //Brooklyn
+        svg1.append("text").html("Queens").attr("font-size",17).attr("x",570).attr("y",250).attr("fill", "#0d3300"); //Queens
+        svg1.append("text").html("Staten Island").attr("font-size",17).attr("x",140).attr("y",400).attr("fill", "#9fff80"); //Staten Island
 
         //Data
         tsv.forEach( function(d) {
