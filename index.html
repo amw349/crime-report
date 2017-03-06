@@ -119,15 +119,15 @@
         var scaleLongi = d3.scaleLinear().domain([-74.24930373,-73.70138638]).range([100,600]);
 
         //Pins
-        svg1.append("text").html("Manhattan").attr("font-size",17).attr("x",260).attr("y",220).attr("fill", "#aaaaaa"); //Manhattan
-        svg1.append("text").html("Bronx").attr("font-size",17).attr("x",470).attr("y",100).attr("fill", "#aaaaaa"); //Bronx
-        svg1.append("text").html("Brooklyn").attr("font-size",17).attr("x",290).attr("y",550).attr("fill", "#aaaaaa"); //Brooklyn
-        svg1.append("text").html("Queens").attr("font-size",17).attr("x",570).attr("y",250).attr("fill", "#aaaaaa"); //Queens
-        svg1.append("text").html("Staten Island").attr("font-size",17).attr("x",140).attr("y",400).attr("fill", "#aaaaaa"); //Staten Island
+        svg1.append("text").html("Manhattan").attr("font-size",17).attr("x",240).attr("y",260).attr("fill", "#aaaaaa");
+        svg1.append("text").html("Bronx").attr("font-size",17).attr("x",550).attr("y",160).attr("fill", "#aaaaaa");
+        svg1.append("text").html("Brooklyn").attr("font-size",17).attr("x",300).attr("y",540).attr("fill", "#aaaaaa");
+        svg1.append("text").html("Queens").attr("font-size",17).attr("x",590).attr("y",350).attr("fill", "#aaaaaa");
+        svg1.append("text").html("Staten Island").attr("font-size",17).attr("x",110).attr("y",410).attr("fill", "#aaaaaa");
 
         //Title
         svg1.append("text").attr("transform", "translate(400, 50)").attr("text-anchor","middle")
-        .attr("font-size","25").attr("fill", "#ffffff")
+        .attr("font-size","25").attr("fill", "#dddddd")
         .html( function() {
             if (crime=="LARCENY") return "Larceny Complaints";
             else if (crime=="AGGRAVATED HARASSMENT") return "Aggravated Harassment Complaints";
@@ -181,8 +181,12 @@
         svg0.append("text").html("Manhattan").attr("transform", "translate(125, 285)").attr("text-anchor","end").attr("fill", "#aaaaaa");
         svg0.append("text").html("Queens").attr("transform", "translate(125, 225)").attr("text-anchor","end").attr("fill", "#aaaaaa");
         svg0.append("text").html("Staten Island").attr("transform", "translate(125, 165)").attr("text-anchor","end").attr("fill", "#aaaaaa");
-        svg0.append("text").html("Concentration of Reports by Time of Day (per Borough)")
-        .attr("transform", "translate(400, 50)").attr("text-anchor","middle").attr("font-size","25").attr("fill", "#ffffff").attr("font-weight","900");
+        svg0.append("text").attr("transform", "translate(400, 50)").attr("text-anchor","middle").attr("font-size","25").attr("fill", "#dddddd").attr("font-weight","900")
+        .html(function() {
+            if (crime=="LARCENY") return "Larceny Complaints by Time of Day";
+            else if (crime=="AGGRAVATED HARASSMENT") return "Aggravated Harassment Complaints by Time of Day";
+            else if (crime=="CRIMINAL MIS") return "Criminal Mischief Complaints by Time of Day";
+        });
 
         //Data
         tsv.forEach( function(d) {
