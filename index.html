@@ -55,10 +55,6 @@
 
     var geo;
     var tsv;
-    var tsv1;
-    var tsv2;
-    var tsv3;
-    var tsv4;
 
     var svg0 = d3.select("#borough_plot");
     var svg1 = d3.select("#borough_map1");
@@ -69,7 +65,6 @@
     var projection = d3.geoMercator();
 
     d3.tsv("data/smaller.tsv", function(error, data) {
-        tsv1 = data;
         tsv = data;
     });
 
@@ -79,7 +74,7 @@
 
         showConcentration();
         showMap(1);
-        plotPoints(1,tsv1);
+        plotPoints(1,"LARCENY");
 
     });
 
@@ -103,7 +98,7 @@
         .attr("d", function (borough_map) { return pathGenerator(borough_map); });
     }
 
-    function plotPoints(num, tsvdata) {
+    function plotPoints(num, crime) {
 
         var map_id = "#borough_map"+num;
         var svg1 = d3.select(map_id);
@@ -124,8 +119,8 @@
         .attr("transform", "translate(400, 50)").attr("text-anchor","middle").attr("font-size","25").attr("fill", "#ffffff");
 
         //Data
-        tsvdata.forEach( function(d) {
-            if ((d.Latitude != undefined) && (d.Longitude != undefined)){
+        tsv.forEach( function(d) {
+            if ((d.Latitude != undefined) && (d.Longitude != undefined) && d.PD_DESC.includes(crime)){
                 var lati = parseFloat(d.Latitude);
                 var longi = parseFloat(d.Longitude);
                 svg1.append("circle")
