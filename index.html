@@ -2,6 +2,7 @@
 <head>
     <title>Crime in New York City</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
     <script type="text/javascript" src="js/geojson.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -13,7 +14,7 @@
            a poster" sort of endeavor, we decided to go for a fixed page width
            to make sure the experience would be standardized and not subject to
            individual screen sizes (much like actual posters). */
-        body{ font-family: "Roboto",sans-serif;
+        body{ font-family: "PT Sans",sans-serif;
             margin: 0;
             background-color: #222222;
             width: 1600px;
@@ -21,10 +22,12 @@
         svg { margin: 0 0 0 0;
             float:left; }
         svg#border
-            { background: url(images/banner.jpg);
+            { background: url(images/banner8.png);
+            background-repeat: no-repeat;
+            background-size: 660px;
             display: block;
             width: 1600px;
-            height: 120px; }
+            height: 140px; }
         svg#borough_map
             {}
         svg#borough_plot
@@ -42,9 +45,9 @@
 <body>
      <svg id="border" viewBox="0 0 100 10" preserveAspectRatio="none">
         <text
-        font-weight = "900"
-        fill= "#ffffff" text-anchor="middle" x="55" y="7" font-size="4.5px">NYPD Complaint Data Analysis</text>
-        <image x="10" y="1.7" width="7" height="7" xlink:href="images/badge.png">
+        font-weight = "0"
+        fill= "#ffffff" x="11" y="6.5" font-size="3.5px">NYPD Complaint Data Analysis</text>
+        <image x="3" y="1.7" width="7" height="7" xlink:href="images/badge.png">
     </svg>
 
     <svg id ="info_blurb" width="800" height="450"></svg>
