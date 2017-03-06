@@ -15,10 +15,11 @@
                     display: block;
                     width: 100%;
                     height: 120px; }
-        svg#borough_map {background-color: #fcfaf4;  
-                        margin-left: 30px;
-                        margin-right: 70px;}
-        svg#borough_plot {margin-right: 70px;}
+        #borough_map {background-color: #fcfaf4;  
+                        display: block;
+                        margin: 0 auto;}
+        #borough_plot {display: block;
+                        margin: 0 auto;
         path.borough_map {stroke: 4px}
         .axisB line{
             stroke: #1a3239;
@@ -29,6 +30,7 @@
         .axisB text{
             fill: #1a3239;
         }  
+
     </style>
 </head>
 <body>
@@ -55,7 +57,7 @@
     var projection = d3.geoMercator();
 
     d3.tsv("data/smaller.tsv", function(error, data) {
-        tsv=data;
+        tsv = data;
     });
 
     //Geojson data taken from https://github.com/dwillis/nyc-maps
